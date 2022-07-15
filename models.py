@@ -188,7 +188,7 @@ class HRNet:
 
 
 if __name__ == '__main__':
-    model = HRNet(input_shape=(512, 512, 3), c=32).build_hrnet(head='pose', num_class=5)
+    model = HRNet(input_shape=(256, 192, 3), c=32).build_hrnet(head='pose', num_class=17)
     print(model.summary())
     tf.keras.utils.plot_model(model, './pose_estimation/model_plot/pose.png')
 
