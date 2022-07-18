@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from keras.layers import Conv2D, BatchNormalization, Activation, UpSampling2D, Input, Add, Concatenate
+from keras.regularizers import L2
 
 
 class HRNet:
@@ -99,7 +100,7 @@ class HRNet:
             inputs = unit(inputs)
         return keras.models.Sequential(units, name)
 
-    def build_hrnet(self, head, num_class):
+    def build_hrnet(self, head, num_class, weight_decay):
         inputs = Input(self.input_shape)
 
         # stem
@@ -181,6 +182,7 @@ class HRNet:
             out = Activation('relu', name='head_relu')(out)
 
             out = Conv2D(filters=num_class, kernel_size=1, padding='same', activation='softmax',
+                         kernel_regularizer=L2(weight_decay), bias_regularizer=L2(weight_decay),
                          name='classifier')(out)
             out = UpSampling2D((4, 4), interpolation='bilinear', name='out_upsample')(out)
             return keras.models.Model(inputs, out)

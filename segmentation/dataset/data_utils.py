@@ -25,10 +25,25 @@ def preprocessing(x, y):
     return x, y
 
 
+# augmentation
+# random flip
+def augmentation(x, y):
+    random_seed = tf.random.uniform(shape=[1], minval=0., maxval=1.)
+
+    if random_seed > 0.5:
+        x = tf.image.flip_up_down(x)
+        y = tf.image.flip_up_down(y)
+    return x, y
+
+
 # get dataset function
-def get_pascal_context_dataset(data_path, width, height, batch_size):
+def get_pascal_context_dataset(data_path, data_type, width, height, batch_size):
     reader_function = get_reader_function(width, height)
     ds = tf.data.TFRecordDataset(data_path).map(reader_function)
-    ds = ds.map(preprocessing).batch(batch_size)
+
+    if data_type == 'train':
+        ds = ds.map(preprocessing).map(augmentation).batch(batch_size)
+    else:
+        ds = ds.map(preprocessing).batch(batch_size)
     ds = ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
     return ds

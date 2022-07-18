@@ -61,7 +61,7 @@ if __name__ == '__main__':
     random.shuffle(mat_list)
     print('total mat files :', len(mat_list))
 
-    train_size = int(len(mat_list) * 0.85)
+    train_size = 5105
     train_mat_list = mat_list[:train_size]
     val_mat_list = mat_list[train_size:]
 
