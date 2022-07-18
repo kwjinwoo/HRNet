@@ -152,3 +152,8 @@ cython_debug/
 .idea/
 
 pose_estimation/dataset/origin/
+segmentation/dataset/trainval/
+segmentation/dataset/VOCdevkit/
+segmentation/dataset/59_labels.txt
+segmentation/dataset/train_PASCAL_context_480_480.tfrecord
+segmentation/dataset/val_PASCAL_context_480_480.tfrecord

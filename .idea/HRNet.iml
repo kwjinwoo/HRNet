@@ -3,6 +3,10 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/pose_estimation/dataset/origin" />
+      <excludeFolder url="file://$MODULE_DIR$/pose_estimation/.ipynb_checkpoints" />
+      <excludeFolder url="file://$MODULE_DIR$/segmentation/dataset/.ipynb_checkpoints" />
+      <excludeFolder url="file://$MODULE_DIR$/segmentation/dataset/trainval" />
+      <excludeFolder url="file://$MODULE_DIR$/segmentation/dataset/VOCdevkit" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

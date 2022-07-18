@@ -183,8 +183,9 @@ class HRNet:
             out = Conv2D(filters=num_class, kernel_size=1, padding='same', activation='softmax',
                          name='classifier')(out)
             out = UpSampling2D((4, 4), interpolation='bilinear', name='out_upsample')(out)
-
             return keras.models.Model(inputs, out)
+        else:
+            raise 'Unexpected head type'
 
 
 if __name__ == '__main__':
