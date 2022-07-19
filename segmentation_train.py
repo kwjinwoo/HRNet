@@ -34,11 +34,13 @@ if __name__ == '__main__':
                                            'val', width, height, batch_size)
 
     # learning rate scheduling
+    decay_steps = 10000
     lr_scheduler = tf.keras.optimizers.schedules.PolynomialDecay(
         initial_learning_rate=args.initial_lr,
-        decay_steps=int(args.num_epoch * 0.9),
+        decay_steps=decay_steps,
         end_learning_rate=args.initial_lr * 0.01,
-        power=0.9
+        power=0.9,
+        cycle=True
     )
 
     # optimizer and loss
