@@ -157,3 +157,5 @@ segmentation/dataset/VOCdevkit/
 segmentation/dataset/59_labels.txt
 segmentation/dataset/train_PASCAL_context_480_480.tfrecord
 segmentation/dataset/val_PASCAL_context_480_480.tfrecord
+segmentation/dataset/train_PASCAL2012.tfrecord
+segmentation/dataset/val_PASCAL2012.tfrecord
