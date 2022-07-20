@@ -76,7 +76,7 @@ class HRNet:
     def build_downsample(self, in_r, out_r, name):
         layers = []
         for i in range(out_r - in_r):
-            layers.append(Conv2D(filters=2 ** (i + 1) * self.c, kernel_size=3, strides=2, padding='same'))
+            layers.append(Conv2D(filters=2 ** (in_r + i) * self.c, kernel_size=3, strides=2, padding='same'))
             layers.append(BatchNormalization())
             layers.append(Activation('relu'))
         return keras.models.Sequential(layers, name)
@@ -113,7 +113,7 @@ class HRNet:
         x2 = self.build_downsample(1, 2, 'stage1_branch1_to_branch2')(x1)
 
         # stage2
-        x1_stage2_out = self.build_stage(x1_stage1_out, 1, 'basic', 'stage2_branch1')(x1)
+        x1_stage2_out = self.build_stage(x1, 1, 'basic', 'stage2_branch1')(x1)
         x2_stage2_out = self.build_stage(x2, 1, 'basic', 'stage2_branch2')(x2)
 
         # split and fusion
