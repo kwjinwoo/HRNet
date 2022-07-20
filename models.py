@@ -65,10 +65,10 @@ class HRNet:
             block = self.build_basic(inputs=inputs, out_filters=in_filters)
         return block
 
-    def build_residual_unit(self, num_blocks, inputs, block):
+    def build_residual_unit(self, num_blocks, inputs, block_name):
         blocks = []
         for i in range(num_blocks):
-            block = self.build_one_residual_block(inputs, inputs.shape[-1], block)
+            block = self.build_one_residual_block(inputs, inputs.shape[-1], block_name)
             blocks.append(block)
             inputs = block(inputs)   # inputs update
         return keras.models.Sequential(blocks)
@@ -76,7 +76,7 @@ class HRNet:
     def build_downsample(self, in_r, out_r, name):
         layers = []
         for i in range(out_r - in_r):
-            layers.append(Conv2D(filters=2 ** (out_r - 1) * self.c, kernel_size=3, strides=2, padding='same'))
+            layers.append(Conv2D(filters=2 ** (i + 1) * self.c, kernel_size=3, strides=2, padding='same'))
             layers.append(BatchNormalization())
             layers.append(Activation('relu'))
         return keras.models.Sequential(layers, name)
