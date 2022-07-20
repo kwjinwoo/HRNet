@@ -3,37 +3,37 @@ import os
 from tqdm import tqdm
 import numpy as np
 from PIL import Image
+import random
 
 
-class PASCAL2012:
-    def __init__(self, img_dir=None, label_dir=None, train_txt_path=None, val_txt_path=None):
+class OXFORDMaker:
+    def __init__(self, img_dir, label_dir, train_txt_path, val_txt_path, shuffle=False):
         self.img_dir = img_dir
         self.label_dir = label_dir
         self.train_list = self.txt_to_list(train_txt_path)
         self.val_list = self.txt_to_list(val_txt_path)
+        if shuffle:
+            random.shuffle(self.train_list)
+
+    @ staticmethod
+    def txt_to_list(txt_path):
+        txt_file = open(txt_path, 'r')
+        return_list = []
+        for line in txt_file.readlines():
+            name = line.strip().split(' ')[0].strip()
+            return_list.append(name)
+        return return_list
 
     def load_label(self, file_name):
         label_path = os.path.join(self.label_dir, file_name + '.png')
         label = Image.open(label_path)
-        label = np.array(label)
-        label = np.where(label == 255, 21, label)
+        label = np.array(label) - 1
         return label
 
     def load_image(self, file_name):
         img_path = os.path.join(self.img_dir, file_name + '.jpg')
         img = tf.io.decode_jpeg(tf.io.read_file(img_path), channels=3)
         return img
-
-    @staticmethod
-    def txt_to_list(self, txt_path):
-        if txt_path:
-            txt_file = open(txt_path, 'r')
-            return_list = []
-            for line in txt_file.readlines():
-                return_list.append(line.strip())
-            return return_list
-        else:
-            return None
 
     def make_tfrecord(self, save_path, dataset_type):
         if dataset_type == 'train':
@@ -62,8 +62,17 @@ class PASCAL2012:
                 )
                 f.write(record.SerializeToString())
 
+
+class OXFORDLoader:
+    def __init__(self, train_path, val_path, height, width, batch_size):
+        self.train_path = train_path
+        self.val_path = val_path
+        self.height = height
+        self.width = width
+        self.batch_size = batch_size
+
     @staticmethod
-    def get_reader_function(self):
+    def get_reader_function():
         @tf.function
         def tfrecord_reader(example):
             feature_description = {"image": tf.io.VarLenFeature(dtype=tf.string),
@@ -77,10 +86,11 @@ class PASCAL2012:
             mask = tf.sparse.to_dense(example['mask'])[0]
             mask = tf.io.decode_png(mask, channels=1)
             return image, mask
+
         return tfrecord_reader
 
     @staticmethod
-    def get_map_functions(self, height, width):
+    def get_map_functions(height, width):
         def resize_and_normalize(x, y):
             x = tf.image.resize(x, (height, width)) / 255.
             y = tf.image.resize(y, (height, width),
@@ -94,20 +104,27 @@ class PASCAL2012:
                 x = tf.image.flip_up_down(x)
                 y = tf.image.flip_up_down(y)
             return x, y
+
         return resize_and_normalize, augmentation
 
-    def get_pascal2012_dataset(self, data_path, data_type, height, width, batch_size):
+    def get_dataset(self, data_path, data_type):
         reader_function = self.get_reader_function()
-        preprocess_func, augmentation_func = self.get_map_functions(height, width)
+        preprocess_func, augmentation_func = self.get_map_functions(self.height, self.width)
 
         ds = tf.data.TFRecordDataset(data_path).map(reader_function)
 
         if data_type == 'train':
-            ds = ds.map(preprocess_func).map(augmentation_func).batch(batch_size)
+            ds = ds.map(preprocess_func).map(augmentation_func).batch(self.batch_size)
         elif data_type == 'val':
-            ds = ds.map(preprocess_func).batch(batch_size)
+            ds = ds.map(preprocess_func).batch(self.batch_size)
         else:
             raise 'Unexpected dataset_type(\'train\' or \'val\')'
 
         ds = ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
         return ds
+
+    def get_train_val_ds(self):
+        train_ds = self.get_dataset(self.train_path, 'train')
+        val_ds = self.get_dataset(self.val_path, 'val')
+
+        return train_ds, val_ds

@@ -1,4 +1,3 @@
-import tensorflow as tf
 from tensorflow import keras
 from keras.layers import Conv2D, BatchNormalization, Activation, UpSampling2D, Input, Add, Concatenate
 from keras.regularizers import L2
@@ -181,20 +180,21 @@ class HRNet:
             out = BatchNormalization(name='head_bn')(out)
             out = Activation('relu', name='head_relu')(out)
 
-            out = Conv2D(filters=num_class, kernel_size=1, padding='same', activation='softmax',
+            out = Conv2D(filters=num_class, kernel_size=1, padding='same',
                          kernel_regularizer=L2(weight_decay), bias_regularizer=L2(weight_decay),
-                         name='classifier')(out)
+                         name='out_conv')(out)
             out = UpSampling2D((4, 4), interpolation='bilinear', name='out_upsample')(out)
+            out = Activation('softmax', name='out_activation')(out)
             return keras.models.Model(inputs, out)
         else:
             raise 'Unexpected head type'
 
 
 if __name__ == '__main__':
-    model = HRNet(input_shape=(256, 192, 3), c=32).build_hrnet(head='pose', num_class=17)
-    print(model.summary())
-    tf.keras.utils.plot_model(model, './pose_estimation/model_plot/pose.png')
+    # model = HRNet(input_shape=(256, 192, 3), c=32).build_hrnet(head='pose', num_class=17)
+    # print(model.summary())
+    # tf.keras.utils.plot_model(model, './pose_estimation/model_plot/pose.png')
 
-    model = HRNet(input_shape=(512, 512, 3), c=32).build_hrnet(head='segmentation', num_class=5)
+    model = HRNet(input_shape=(512, 512, 3), c=32).build_hrnet(head='segmentation', num_class=4, weight_decay=0.0001)
     print(model.summary())
-    tf.keras.utils.plot_model(model, './segmentation/model_plot/segmen.png')
+    # tf.keras.utils.plot_model(model, './segmentation/model_plot/segmen.png')
