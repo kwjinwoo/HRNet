@@ -1,3 +1,4 @@
+import tensorflow as tf
 from tensorflow import keras
 from keras.layers import Conv2D, BatchNormalization, Activation, UpSampling2D, Input, Add, Concatenate
 from keras.regularizers import L2
@@ -191,10 +192,10 @@ class HRNet:
 
 
 if __name__ == '__main__':
-    # model = HRNet(input_shape=(256, 192, 3), c=32).build_hrnet(head='pose', num_class=17)
-    # print(model.summary())
-    # tf.keras.utils.plot_model(model, './pose_estimation/model_plot/pose.png')
-
-    model = HRNet(input_shape=(512, 512, 3), c=32).build_hrnet(head='segmentation', num_class=4, weight_decay=0.0001)
+    model = HRNet(input_shape=(256, 192, 3), c=32).build_hrnet(head='pose', num_class=17, weight_decay=0.0001)
     print(model.summary())
-    # tf.keras.utils.plot_model(model, './segmentation/model_plot/segmen.png')
+    tf.keras.utils.plot_model(model, './pose_estimation/model_plot/pose.png')
+
+    model = HRNet(input_shape=(480, 480, 3), c=48).build_hrnet(head='segmentation', num_class=4, weight_decay=0.0001)
+    print(model.summary())
+    tf.keras.utils.plot_model(model, './segmentation/model_plot/segmen.png')
