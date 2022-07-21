@@ -78,15 +78,15 @@ class HRNet:
         for i in range(out_r - in_r):
             layers.append(Conv2D(filters=2 ** (in_r + i) * self.c, kernel_size=3, strides=2, padding='same'))
             layers.append(BatchNormalization())
-            layers.append(Activation('relu'))
+        layers.append(Activation('relu'))
         return keras.models.Sequential(layers, name)
 
     def build_upsample(self, in_r, out_r, name):
         i = in_r - out_r
         block = keras.models.Sequential([
-            UpSampling2D((2 ** i, 2 ** i), interpolation='bilinear'),
             Conv2D(filters=2 ** (out_r - 1) * self.c, kernel_size=1, padding='same'),
             BatchNormalization(),
+            UpSampling2D((2 ** i, 2 ** i), interpolation='bilinear'),
             Activation('relu')
         ], name)
         return block

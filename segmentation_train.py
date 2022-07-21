@@ -32,8 +32,8 @@ if __name__ == '__main__':
 
     if args.dataset_type == 'context':
         batch_size = args.batch_size
-        loader = PASCALContextLoader(train_path='./segmentation/dataset/tfrecords/train_OXFORD.tfrecord',
-                                     val_path='./segmentation/dataset/tfrecords/val_OXFORD.tfrecord',
+        loader = PASCALContextLoader(train_path='./segmentation/dataset/tfrecords/train_PASCALContext.tfrecord',
+                                     val_path='./segmentation/dataset/tfrecords/val_PASCALContext.tfrecord',
                                      height=height, width=width, batch_size=batch_size)
         train_ds, val_ds = loader.get_train_val_ds()
     elif args.dataset_type == 'pascal':
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     # callback function
     callbacks_list = [tf.keras.callbacks.ModelCheckpoint(
-        filepath='./segmentation/ckpt/'+args.dataset_type+'_segmentation',
+        filepath='./segmentation/ckpt'+args.dataset_type+'/'+args.dataset_type+'_segmentation',
         monitor='val_loss',
         mode='min',
         save_weights_only=True,
