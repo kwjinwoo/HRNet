@@ -61,7 +61,8 @@ if __name__ == '__main__':
     )
 
     # optimizer and loss
-    optimizer = tf.keras.optimizers.SGD(learning_rate=lr_scheduler, momentum=0.9)
+    # optimizer = tf.keras.optimizers.SGD(learning_rate=lr_scheduler, momentum=0.9)
+    optimizer = tf.keras.optimizers.Adam()
     loss = tf.keras.losses.SparseCategoricalCrossentropy()
     model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
 
@@ -77,6 +78,7 @@ if __name__ == '__main__':
     hist = model.fit(train_ds, validation_data=val_ds, epochs=args.num_epoch, callbacks=callbacks_list,
                      verbose=2)
 
+    model.save_weights('./segmentation/ckpt/'+args.dataset_type+'_segmentation_final')
     # plotting loss
     plt.figure(figsize=(12, 12))
     plt.plot(hist.history['loss'], label='train')

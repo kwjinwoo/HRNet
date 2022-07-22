@@ -3,6 +3,7 @@ import os
 from tqdm import tqdm
 import numpy as np
 from PIL import Image
+import random
 
 
 class PASCAL2012Maker:
@@ -95,13 +96,19 @@ class PASCAL2012Loader:
             return x, y
 
         def augmentation(x, y):
-            random_seed = tf.random.uniform(shape=[1], minval=0., maxval=1.)
+            random_flip = tf.random.uniform(shape=[1], minval=0., maxval=1.)
+            random_crop = tf.random.uniform(shape=[1], minval=0., maxval=1.)
 
-            if random_seed > 0.5:
+            if random_flip > 0.5:
                 x = tf.image.flip_up_down(x)
                 y = tf.image.flip_up_down(y)
-            return x, y
 
+            if random_crop > 0.5:
+                image_shape = tf.shape(x)
+                seed = random.randint(0, 42)
+                x = tf.image.random_crop(x, (image_shape[0] // 2, image_shape[1] // 2, 3), seed=seed)
+                y = tf.image.random_crop(y, (image_shape[0] // 2, image_shape[1] // 2, 1), seed=seed)
+            return x, y
         return resize_and_normalize, augmentation
 
     def get_dataset(self, data_path, data_type):
@@ -111,7 +118,7 @@ class PASCAL2012Loader:
         ds = tf.data.TFRecordDataset(data_path).map(reader_function)
 
         if data_type == 'train':
-            ds = ds.map(preprocess_func).map(augmentation_func).batch(self.batch_size)
+            ds = ds.map(augmentation_func).map(preprocess_func).batch(self.batch_size)
         elif data_type == 'val':
             ds = ds.map(preprocess_func).batch(self.batch_size)
         else:
@@ -125,3 +132,5 @@ class PASCAL2012Loader:
         val_ds = self.get_dataset(self.val_path, 'val')
 
         return train_ds, val_ds
+
+
