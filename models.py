@@ -13,17 +13,17 @@ class HRNet:
 
     def build_bottleneck(self, inputs, in_filters, expansion=4):
         # channel compression
-        x = Conv2D(filters=in_filters // expansion, kernel_size=1, padding='same')(inputs)
+        x = Conv2D(filters=in_filters // expansion, kernel_size=1, padding='same', use_bias=False)(inputs)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
 
         # convolution
-        x = Conv2D(filters=in_filters // expansion, kernel_size=3, padding='same')(x)
+        x = Conv2D(filters=in_filters // expansion, kernel_size=3, padding='same', use_bias=False)(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
 
         # expansion
-        x = Conv2D(filters=in_filters, kernel_size=1, padding='same')(x)
+        x = Conv2D(filters=in_filters, kernel_size=1, padding='same', use_bias=False)(x)
         x = BatchNormalization()(x)
 
         # residual
@@ -34,12 +34,12 @@ class HRNet:
 
     def build_basic(self, inputs, out_filters):
         # conv1
-        x = Conv2D(filters=out_filters, kernel_size=3, padding='same')(inputs)
+        x = Conv2D(filters=out_filters, kernel_size=3, padding='same', use_bias=False)(inputs)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
 
         # conv2
-        x = Conv2D(filters=out_filters, kernel_size=3, padding='same')(x)
+        x = Conv2D(filters=out_filters, kernel_size=3, padding='same', use_bias=False)(x)
         x = BatchNormalization()(x)
 
         # residual
@@ -50,10 +50,10 @@ class HRNet:
 
     def build_stem(self):
         block = keras.models.Sequential([
-            Conv2D(filters=self.c, kernel_size=3, strides=2, padding='same'),
+            Conv2D(filters=self.c, kernel_size=3, strides=2, padding='same', use_bias=False),
             BatchNormalization(),
             Activation('relu'),
-            Conv2D(filters=self.c, kernel_size=3, strides=2, padding='same'),
+            Conv2D(filters=self.c, kernel_size=3, strides=2, padding='same', use_bias=False),
             BatchNormalization(),
             Activation('relu')
         ], name='stem_block')
@@ -77,7 +77,8 @@ class HRNet:
     def build_downsample(self, in_r, out_r, name):
         layers = []
         for i in range(out_r - in_r):
-            layers.append(Conv2D(filters=2 ** (in_r + i) * self.c, kernel_size=3, strides=2, padding='same'))
+            layers.append(Conv2D(filters=2 ** (in_r + i) * self.c, kernel_size=3, strides=2,
+                                 padding='same', use_bias=False))
             layers.append(BatchNormalization())
             layers.append(Activation('relu'))
         return keras.models.Sequential(layers, name)
@@ -86,7 +87,7 @@ class HRNet:
         i = in_r - out_r
         block = keras.models.Sequential([
             UpSampling2D((2 ** i, 2 ** i), interpolation='bilinear'),
-            Conv2D(filters=2 ** (out_r - 1) * self.c, kernel_size=1, padding='same'),
+            Conv2D(filters=2 ** (out_r - 1) * self.c, kernel_size=1, padding='same', use_bias=False),
             BatchNormalization(),
             Activation('relu')
         ], name)
@@ -152,7 +153,7 @@ class HRNet:
                         self.build_upsample(3, 1, 'stage4_branch3_to_branch1')(x3_stage4_out),
                         self.build_upsample(4, 1, 'stage4_branch4_to_branch1')(x4_stage4_out)])
             out = Conv2D(filters=num_class, kernel_size=1, padding='same',
-                         activation='sigmoid', name='head')(x1)
+                         activation='sigmoid', use_bias=False, name='head')(x1)
 
             return keras.models.Model(inputs, out, name='pose_estimator')
 
@@ -177,15 +178,15 @@ class HRNet:
 
             out = Concatenate(name='head_concat')([x1, x2, x3, x4])
             out = Conv2D(filters=(self.c + self.c * 2 + self.c * 4 + self. c * 8), kernel_size=1, padding='same',
-                         name='head_conv')(out)
+                         use_bias=False, name='head_conv')(out)
             out = BatchNormalization(name='head_bn')(out)
             out = Activation('relu', name='head_relu')(out)
 
             out = Conv2D(filters=num_class, kernel_size=1, padding='same',
                          kernel_regularizer=L2(weight_decay), bias_regularizer=L2(weight_decay),
-                         name='out_conv')(out)
-            out = UpSampling2D((4, 4), interpolation='bilinear', name='out_upsample')(out)
+                         use_bias=False, name='out_conv')(out)
             out = Activation('softmax', name='out_activation')(out)
+            out = UpSampling2D((4, 4), interpolation='bilinear', name='out_upsample')(out)
             return keras.models.Model(inputs, out)
         else:
             raise 'Unexpected head type'
