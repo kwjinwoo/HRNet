@@ -9,9 +9,8 @@
 ## train
 * Semantic Segmentation
 
-
     python segmentation_train.py --dataset_type --width --height --num_class --c --batch_size
-    --num_epoch --initial_lr --weight_decay
+    --num_epoch --initial_lr --weight_decay   
 
     args
     dataset_type : your dataset type(oxford, context, pascal)
