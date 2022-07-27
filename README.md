@@ -1,14 +1,11 @@
 # HRNet Implementation
-***
 ## Introduction
 * This repository is HRNet Implementation code with Tensorflow
 * Implemented Simple Semantic Segmentation task
-***
 ## requirement
     python == 3.8
     tensorflow == 2.8.0
     matplotlib == 3.5.2
-***
 ## train
 * Semantic Segmentation
 
@@ -28,5 +25,4 @@
     weight_decay : weight decay ratio
 ## result
 * [segmentation](https://github.com/kwjinwoo/HRNet/tree/main/segmentation)
-***
 ## reference
