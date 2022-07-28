@@ -77,11 +77,11 @@ if __name__ == '__main__':
     hist = model.fit(train_ds, validation_data=val_ds, epochs=args.num_epoch, callbacks=callbacks_list,
                      verbose=2)
 
-    model_save_path = './segmentation/'+args.dataset_type
+    model_save_path = './segmentation/model_asset/'+args.dataset_type
     if os.path.isdir(model_save_path):
         model.save(model_save_path)
     else:
-        os.mkdir(model_save_path)
+        os.mkdirs(model_save_path)
         model.save(model_save_path)
 
 

@@ -14,7 +14,11 @@ learning_rate = 0.001
 weight_decay = 0.0001
 ```
 ## result
-* train image
-* valid image
+* train image   
+![TRAIN1](/segmentation/infer_img/train1.jpg)   
+![TRAIN2](/segmentation/infer_img/train2.jpg)
+* valid image   
+![VAL1](/segmentation/infer_img/val1.jpg)   
+![VAL2](/segmentation/infer_img/val2.jpg)
 * test image   
 ![TEST](/segmentation/infer_img/alexandru-rotariu-o_QTeyGVWjQ-unsplash.jpg)

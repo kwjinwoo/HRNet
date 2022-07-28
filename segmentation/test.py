@@ -10,7 +10,7 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='inference segmentation')
-parser.add_argument('--model_path', type=str, default="./model_asset")
+parser.add_argument('--model_path', type=str, default="./model_asset/oxford")
 parser.add_argument('--save_dir', type=str, default="./infer_img")
 parser.add_argument('--input_dir', type=str, default="./input_img")
 
@@ -33,7 +33,10 @@ def predict(input_img, model):
 
 
 def visualization(pred, origin, save_path):
-    plt.figure(figsize=(16, 16))
+    h, w, c = origin.shape
+    pred = tf.image.resize(np.expand_dims(pred, axis=-1), (h, w), method='nearest').numpy()
+    pred = np.squeeze(pred)
+    plt.figure(figsize=(16, 7))
     plt.subplot(1, 2, 1)
     plt.imshow(origin)
     plt.axis('off')
@@ -63,7 +66,3 @@ if __name__ == '__main__':
         input_image, origin_image = load_img(img_path, height, width)
         pred = predict(input_image, model)
         visualization(pred, origin_image, save_path)
-
-
-
-
