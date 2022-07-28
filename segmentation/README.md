@@ -17,4 +17,4 @@ weight_decay = 0.0001
 * train image
 * valid image
 * test image   
-![TEST]('/infer_img/alexandru-rotariu-o_QTeyGVWjQ-unsplash.jpg)
+![TEST](/segmentation/infer_img/alexandru-rotariu-o_QTeyGVWjQ-unsplash.jpg)
