@@ -3,7 +3,6 @@ from segmentation.dataset.OXFORD import OXFORDLoader
 from segmentation.dataset.PASCALContext import PASCALContextLoader
 import models
 import tensorflow as tf
-import matplotlib.pyplot as plt
 import os
 import argparse
 
@@ -61,8 +60,8 @@ if __name__ == '__main__':
     )
 
     # optimizer and loss
-    # optimizer = tf.keras.optimizers.SGD(learning_rate=lr_scheduler, momentum=0.9)
-    optimizer = tf.keras.optimizers.Adam()
+    optimizer = tf.keras.optimizers.SGD(learning_rate=lr_scheduler, momentum=0.9)
+    # optimizer = tf.keras.optimizers.Adam()
     loss = tf.keras.losses.SparseCategoricalCrossentropy()
     model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
 
@@ -78,18 +77,11 @@ if __name__ == '__main__':
     hist = model.fit(train_ds, validation_data=val_ds, epochs=args.num_epoch, callbacks=callbacks_list,
                      verbose=2)
 
-    model.save_weights('./segmentation/ckpt/'+args.dataset_type+'_segmentation_final')
-    # plotting loss
-    plt.figure(figsize=(12, 12))
-    plt.plot(hist.history['loss'], label='train')
-    plt.plot(hist.history['val_loss'], label='val')
-    plt.legend()
-
-    loss_img_dir = './segmentation/loss'
-    loss_img_name = args.dataset_type + '_segmentation.png'
-
-    if os.path.isdir(loss_img_dir):
-        plt.savefig(os.path.join(loss_img_dir, loss_img_name))
+    model_save_path = './segmentation/'+args.dataset_type
+    if os.path.isdir(model_save_path):
+        model.save(model_save_path)
     else:
-        os.mkdir(loss_img_dir)
-        plt.savefig(os.path.join(loss_img_dir, loss_img_name))
+        os.mkdir(model_save_path)
+        model.save(model_save_path)
+
+
