@@ -64,7 +64,7 @@ if __name__ == '__main__':
     if os.path.isdir(model_save_path):
         model.save(model_save_path)
     else:
-        os.mkdirs(model_save_path)
+        os.makedirs(model_save_path)
         model.save(model_save_path)
 
 
