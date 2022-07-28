@@ -22,3 +22,12 @@ weight_decay = 0.0001
 ![VAL2](/segmentation/infer_img/val2.jpg)
 * test image   
 ![TEST]()
+## test
+```
+python test.py --model_path --save_dir --input_dir
+
+args
+--model_path : Semantic Segmentation model dir path
+--save_dir : inferenced result directory
+--input_dir : input images directory 
+```
