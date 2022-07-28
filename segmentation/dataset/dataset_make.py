@@ -19,7 +19,6 @@ args = parser.parse_args()
 
 
 if __name__ == '__main__':
-    dataset_type = args.dataset
     maker = OXFORDMaker(args.img_dir, args.label_dir, args.train_txt, args.val_txt, args.shuffle)
 
     # train dataset

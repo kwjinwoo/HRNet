@@ -24,8 +24,8 @@ then tfrecord files generated
   ```
   $segmentation/
   ├── tfrecords
-  |   ├── dataset_type.tfrecord
-  |   └── dataset_type.tfrecord
+  |   ├── train_OXFORD.tfrecord
+  |   └── val_OXFORD.tfrecord
   ```
 ## train
 * Semantic Segmentation
