@@ -8,12 +8,11 @@
     matplotlib == 3.5.2
 ## dataset
 * Semantic Segmentation   
-
+using OXFORD PET Dataset
 ```
-python ./segmentation/dataset/dataset_make.py --dataset --img_dir --label_dir --train_txt --val_txt --shuffle --save_dir
+python ./segmentation/dataset/dataset_make.py --img_dir --label_dir --train_txt --val_txt --shuffle --save_dir
   
 args
---datset : dataset name (oxford, context, pascal)
 --img_dr : jpg images directory path
 --label_dir : png labels directory path
 --train_txt : train.txt file path
@@ -31,10 +30,9 @@ then tfrecord files generated
 ## train
 * Semantic Segmentation
 ```
-python segmentation_train.py --dataset_type --width --height --num_class --c --batch_size --num_epoch --initial_lr --weight_decay   
+python segmentation_train.py --width --height --num_class --c --batch_size --num_epoch --initial_lr --weight_decay   
 
 args
-dataset_type : your dataset type(oxford, context, pascal)
 width : input image width
 height : input image height
 num_class : the number of class

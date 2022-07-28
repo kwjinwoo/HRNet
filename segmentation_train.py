@@ -1,6 +1,4 @@
-from segmentation.dataset.PASCAL2012 import PASCAL2012Loader
 from segmentation.dataset.OXFORD import OXFORDLoader
-from segmentation.dataset.PASCALContext import PASCALContextLoader
 import models
 import tensorflow as tf
 import os
@@ -8,7 +6,6 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Training Segmentation model')
-parser.add_argument('--dataset_type', type=str, required=True)
 parser.add_argument('--width', type=int, required=True, help='input and output image width')
 parser.add_argument('--height', type=int, required=True, help='input and output image height')
 parser.add_argument('--num_class', type=int, required=True, help='output class number')
@@ -29,25 +26,11 @@ if __name__ == '__main__':
     model = models.HRNet((height, width, 3), c).build_hrnet('segmentation', num_class, args.weight_decay)
     print(model.summary())
 
-    if args.dataset_type == 'context':
-        batch_size = args.batch_size
-        loader = PASCALContextLoader(train_path='./segmentation/dataset/tfrecords/train_PASCALContext.tfrecord',
-                                     val_path='./segmentation/dataset/tfrecords/val_PASCALContext.tfrecord',
-                                     height=height, width=width, batch_size=batch_size)
-        train_ds, val_ds = loader.get_train_val_ds()
-    elif args.dataset_type == 'pascal':
-        batch_size = args.batch_size
-        loader = PASCAL2012Loader(train_path='./segmentation/dataset/tfrecords/train_PASCAL2012.tfrecord',
-                                     val_path='./segmentation/dataset/tfrecords/val_PASCAL2012.tfrecord',
-                                     height=height, width=width, batch_size=batch_size)
-        train_ds, val_ds = loader.get_train_val_ds()
-
-    elif args.dataset_type == 'oxford':
-        batch_size = args.batch_size
-        loader = OXFORDLoader(train_path='./segmentation/dataset/tfrecords/train_OXFORD.tfrecord',
-                                  val_path='./segmentation/dataset/tfrecords/val_OXFORD.tfrecord',
-                                  height=height, width=width, batch_size=batch_size)
-        train_ds, val_ds = loader.get_train_val_ds()
+    batch_size = args.batch_size
+    loader = OXFORDLoader(train_path='./segmentation/dataset/tfrecords/train_OXFORD.tfrecord',
+                              val_path='./segmentation/dataset/tfrecords/val_OXFORD.tfrecord',
+                              height=height, width=width, batch_size=batch_size)
+    train_ds, val_ds = loader.get_train_val_ds()
 
     # learning rate scheduling
     decay_steps = 10000
@@ -67,7 +50,7 @@ if __name__ == '__main__':
 
     # callback function
     callbacks_list = [tf.keras.callbacks.ModelCheckpoint(
-        filepath='./segmentation/ckpt'+args.dataset_type+'/'+args.dataset_type+'_segmentation',
+        filepath='./segmentation/ckpt/oxford/oxford_segmentation',
         monitor='val_loss',
         mode='min',
         save_weights_only=True,
@@ -77,7 +60,7 @@ if __name__ == '__main__':
     hist = model.fit(train_ds, validation_data=val_ds, epochs=args.num_epoch, callbacks=callbacks_list,
                      verbose=2)
 
-    model_save_path = './segmentation/model_asset/'+args.dataset_type
+    model_save_path = './segmentation/model_asset/oxford'
     if os.path.isdir(model_save_path):
         model.save(model_save_path)
     else:
