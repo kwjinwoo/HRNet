@@ -21,7 +21,7 @@ weight_decay = 0.0001
 ![VAL1](/segmentation/infer_img/val1.jpg)   
 ![VAL2](/segmentation/infer_img/val2.jpg)
 * test image   
-![TEST]()
+![TEST](/segmentation/infer_img/alexandru-rotariu-o_QTeyGVWjQ-unsplash.jpg)
 ## test
 ```
 python test.py --model_path --save_dir --input_dir
